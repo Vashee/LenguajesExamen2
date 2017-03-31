@@ -177,3 +177,12 @@ zeroA({add, {num, 0}, E}) ->
 	E;
 zeroA(E) ->
 	E.
+
+mul0({mul, E, {num,1}}) ->
+	E;
+mul0({mul,{num,1}, E}) ->
+	E;
+mul0(E) ->
+	E.
+
+
