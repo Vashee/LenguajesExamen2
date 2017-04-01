@@ -68,9 +68,6 @@ lookup(A,[{A,V}|_]) ->
 lookup(A,[_|Rest]) ->
 	lookup(A,Rest).
 
-%% ====================================================================
-%% Internal functions
-%% ====================================================================
 
 %%Four kind of data that represent instructions. Diversion machine, compilation
 %% and its running
@@ -130,8 +127,13 @@ compile({add2, E1, E2}) ->
 compile({mul2, E1, E2}) -> 
 	compile(E1) ++ compile(E2) ++ [{mul2}].
 
-%% PARSING
+%%'MCex2':compile({add, {num, 2}, {mul, {num, 3}, {num, 4}}}).
+%%'MCex2':run([{push, 2}, {push, 3}, {push, 4}, {mul2}, {add2}], [], []).
 
+%%'MCex2':compile({add, {num, 2}, {mul, {num, 3}, {var, a}}}).
+%%'MCex2':run(A, [{a,4}], []).
+
+%% PARSING
 -spec parse(string()) -> {expr(), string()}.
 
 parse([$( | Rest]) ->						%%starts with a '(
@@ -178,15 +180,45 @@ zeroA({add, {num, 0}, E}) ->
 zeroA(E) ->
 	E.
 
+%%Multiplying by one
 mul0({mul, E, {num,1}}) ->
 	E;
 mul0({mul,{num,1}, E}) ->
 	E;
 mul0(E) ->
 	E.
+%%Multiplying by zero
+mulZ({mul, _, {num,0}}) ->
+	{num,0};
+mulZ({mul,{num,0}, _}) ->
+	{num,0};
+mulZ(E) ->
+	E.
 
-%%'MCex2':compile({add, {num, 2}, {mul, {num, 3}, {num, 4}}}).
-%%'MCex2':run([{push, 2}, {push, 3}, {push, 4}, {mul2}, {add2}], [], []).
+%%General simplification
+%%Takes a list of functions an aplies all of them one after the other.
 
-%%'MCex2':compile({add, {num, 2}, {mul, {num, 3}, {var, a}}}).
-%%'MCex2':run(A, [{a,4}], []).
+compose([]) ->
+	fun (E) -> E end;  %%caso base
+
+%%Example of high-order function
+%%It takes a list of functions as arguments
+%%and returns a function as a result.
+compose([Rule|Rules]) ->
+	fun (E) -> (compose(Rules))(Rule(E)) end.
+
+rules() ->
+	[fun zeroA/1, fun mul0/1, fun mulZ/1].
+
+%%Inner expressions firts.
+%%take F and apply it to the result of adding the simplified version
+simp(F, {add, E1, E2}) ->
+	F({add, simp(F, E1), simp(F, E2)});
+simp(F, {mul, E1, E2}) ->
+	F({mul, simp(F, E1), simp(F, E2)});
+%%any other expression will simplify to itself.
+%%High-order function
+simp(_F, E) -> E.
+
+simplify(E) ->
+	simp(compose(rules()), E).
