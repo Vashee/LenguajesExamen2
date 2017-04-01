@@ -121,10 +121,10 @@ compile({var, A}) ->
 
 %%To perform and add, evaluate two sub-expressions, putting each of the results on the stack
 %% and then add the values on top of the stack.
-compile({add2, E1, E2}) -> 
+compile({add, E1, E2}) -> 
 	compile(E1) ++ compile(E2) ++ [{add2}];
 
-compile({mul2, E1, E2}) -> 
+compile({mul, E1, E2}) -> 
 	compile(E1) ++ compile(E2) ++ [{mul2}].
 
 %%'MCex2':compile({add, {num, 2}, {mul, {num, 3}, {num, 4}}}).
