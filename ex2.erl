@@ -1,7 +1,7 @@
 %% @author Equipo1
 %% @doc @todo Add description to 'ex2'.
 
--module('ex2').
+-module(ex2).
 -compile(export_all).
 -type expr() :: {'num',integer()}
 			 |  {'var',atom()}
@@ -108,7 +108,7 @@ compile({mul, E1, E2}) ->
 %%'MCex2':run([{push, 2}, {push, 3}, {push, 4}, {mul2}, {add2}], [], []).
 
 %%Así se corren:
-%%'MCex2':compile({add, {num, 2}, {mul, {num, 3}, {var, a}}}).
+%%A='MCex2':compile({add, {num, 2}, {mul, {num, 3}, {var, a}}}).
 %%'MCex2':run(A, [{a,4}], []).
 
 %% PARSING
@@ -164,6 +164,9 @@ get_while(_P, []) ->
 
 
 %%SIMPLIFICATION
+%%'MCex2':zeroA({add,{num,5},{num,0}}).
+%%'MCex2':zeroA({add,{num,0},{num,5}}).
+%%'MCex2':zeroA({add,{num,5}}).
 zeroA({add, E, {num, 0}}) ->
 	E;
 zeroA({add, {num, 0}, E}) ->
@@ -172,13 +175,21 @@ zeroA(E) ->
 	E.
 
 %%Multiplying by one
+%%'MCex2':mul0({mul,{num,5},{num,1}}).
+%%'MCex2':mul0({mul,{num,1},{num,5}}).
+%%'MCex2':mul0({mul,{num,5}}).
 mul0({mul, E, {num,1}}) ->
 	E;
 mul0({mul,{num,1}, E}) ->
 	E;
 mul0(E) ->
 	E.
+
 %%Multiplying by zero
+%%'MCex2':mulZ({mul,{num,4},{num,0}}).
+%%'MCex2':mulZ({mul,{num,0},{num,4}}).
+%%'MCex2':mulZ({mul,{num,4}}).
+
 mulZ({mul, _, {num,0}}) ->
 	{num,0};
 mulZ({mul,{num,0}, _}) ->
@@ -190,6 +201,9 @@ compose([]) ->
 	fun (E) -> E end;  %%caso base
 
 %%Example of high-order function
+%%'MCex2':simplify({add,{num,0},{mul,{num,3},{num,4}}}).
+%%'MCex2':simplify({add,{num,2},{mul,{num,3},{num,0}}}).
+
 compose([Rule|Rules]) ->
 	fun (E) -> (compose(Rules))(Rule(E)) end.
 
