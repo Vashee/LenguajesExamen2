@@ -164,9 +164,10 @@ is_alpha(Ch) -> $a =< Ch andalso Ch =< $z.
 %%Get the longest initial segment of a list with a given property
 -spec get_while(fun((T) -> boolean()), [T]) -> {[T], [T]}.
 
-%%Así lo corren:
+%%Así se corre:
 %%'MCex2':get_while(fun(X) -> X>0 end, [1,2,3]).
-
+%%'MCex2':get_while(fun(X) -> X>5 end, [7,6,2,3]).
+%%'MCex2':get_while([],[]).
 get_while(P, [Ch | Rest]) ->
 	case P(Ch) of
 		true ->
