@@ -129,6 +129,8 @@ compile({mul, E1, E2}) ->
 %%'MCex2':run(A, [{a,4}], []).
 
 %% PARSING
+%%Así lo corren:
+%% 'MCex2':parse("(2+(3*4))").
 -spec parse(string()) -> {expr(), string()}.
 
 parse([$( | Rest]) ->						%%starts with a '(
@@ -161,6 +163,9 @@ is_alpha(Ch) -> $a =< Ch andalso Ch =< $z.
 %%Recognising numbers and literals
 %%Get the longest initial segment of a list with a given property
 -spec get_while(fun((T) -> boolean()), [T]) -> {[T], [T]}.
+
+%%Así lo corren:
+%%'MCex2':get_while(fun(X) -> X>0 end, [1,2,3]).
 
 get_while(P, [Ch | Rest]) ->
 	case P(Ch) of
