@@ -2,12 +2,7 @@
 %% @doc @todo Add description to 'MCex2'.
 
 -module('MCex2').
-
-%% ====================================================================
-%% API functions
-%% ====================================================================
 -compile(export_all).
-
 -type expr() :: {'num',integer()}
 			 |  {'var',atom()}
 			 |  {'add',expr(),expr()}
@@ -148,9 +143,17 @@ parse([$( | Rest]) ->						%%starts with a '(
     RestFinal};
 
 %%literals
+parse([Ch|Rest]) when ($0 =< Ch andalso Ch =< $9) orelse Ch==$- ->
+    {Succeeds,Remainder} = get_while(fun is_digit/1,Rest),
+    {{num, list_to_integer([Ch|Succeeds])}, Remainder};
+
 parse([Ch|Rest])  when $a =< Ch andalso Ch =< $z ->
     {Succeeds,Remainder} = get_while(fun is_alpha/1,Rest),
     {{var, list_to_atom([Ch|Succeeds])}, Remainder}.
+
+-spec is_digit(integer()) -> boolean().
+is_digit(Ch) ->
+    $0 =< Ch andalso Ch =< $9.
 
 %%Testing for a small alphabetic character..
 is_alpha(Ch) -> $a =< Ch andalso Ch =< $z.
