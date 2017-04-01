@@ -185,4 +185,8 @@ mul0({mul,{num,1}, E}) ->
 mul0(E) ->
 	E.
 
+%%'MCex2':compile({add, {num, 2}, {mul, {num, 3}, {num, 4}}}).
+%%'MCex2':run([{push, 2}, {push, 3}, {push, 4}, {mul2}, {add2}], [], []).
 
+%%'MCex2':compile({add, {num, 2}, {mul, {num, 3}, {var, a}}}).
+%%'MCex2':run(A, [{a,4}], []).
